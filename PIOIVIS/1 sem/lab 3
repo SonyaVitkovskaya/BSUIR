@@ -1,0 +1,348 @@
+\documentclass[a4paper,twocolumn]{article}
+\usepackage[left=2.5cm, right=2.5cm, top=2cm, bottom=2.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[english]{babel}
+\usepackage{tempora}
+\usefont{T2A}{Tempora-TLF}{m}{n}
+\usepackage{setspace}
+\usepackage{mathtools}
+\usepackage{titlesec}
+\renewcommand\thesection{\Roman{section}}
+\titleformat{\section}[block]{\large\centering}{\thesection.}{0.5em}{}
+
+\date{}
+\title{\huge{Modeling of Reasoning a Cognitive Agent with \\ Significant Time Restrictions}}
+
+\author{\small
+\begin{tabular}{ c c c } 
+$1^{st}$ Igor Fominykh & $2^{nd}$ Alexander Eremeev & $3^{rd}$ Nikolay Alekseev \\ 
+{\textit {National Research University "MPEI"}} & \textit{National Research University "MPEI"} & \textit{National Research University "MPEI"} \\ 
+111250 Moscow, Russia & 111250 Moscow, Russia & 111250 Moscow, Russia\\ 
+igborfomin@mail.ru & eremeev@appmat.ru & alekseevnp@list.ru\\ 
+\end{tabular}\\
+\\
+\small
+\begin{flushleft}
+\begin{tabular}{c}
+$4^{th}$ Natalia Gulyakina\\ \textit{Belarusian State University of Informatics and Radioelectronics}\\220013 Minsk, Belarus\\guliakina@bsuir.by
+\end{tabular}
+\end{flushleft}}
+\setcounter{page}{123} 
+\begin{document}
+\maketitle
+\begin{spacing}{0.9}
+\textbf{\small{\textit{Abstract}—The problems of developing logical system to
+model the reasoning of cognitive agent are faced. Such
+an agent should be able to make conclusions based on its
+knowledge and observations in solving problems in the case
+of hard real-time. The hard real-time is characterized by
+setting a critical time threshold that considerably influences
+on agent’s problem-solving.Exceeding this time threshold
+can lead to serious, sometimes catastrophic consequences
+and it is unacceptable for the agent. The formal basis of
+the modeling system is a logical system that integrates the
+concepts of active temporal logic and logical programming.
+Among the original approaches and methods proposed by
+the authors the following one should be mentioned. An integrated logical system that combines the concepts of active
+logic and logical programming has been built.. An approach
+to constructing a paraconsistent declarative semantics based
+on the concept of active logic has been introduced. The
+method of representing agent’s temporal non-monotonous
+reasoning by active temporal logic has been proposed. The
+temporal granulation technique in logical system to formalize meta-reasoning has been suggested. Taking into account
+that the agent has to make decisions under the lack of time.
+the problem of the decision quality arises. In this context,
+it is useful to take branching time logics that allows us to
+infer various consequences of agent’s decision. A subclass
+of such logics oriented to real-time systems applications
+has been considered. In general, the proposed methods and
+algorithms provide the conceptual and algorithmic bases
+for developing new generation intelligent systems able to
+function in the case of hard real-time.}}
+
+\setlength{\parskip}{0.9pt}
+\textbf{\small{\textit{Keywords}—cognitive agent, hard time constraints, active
+logic, step theory, temporal reasoning, logical programming}}
+\end{spacing}
+
+\vspace{-0.5cm}
+\section{Introduction}
+\vspace{-0.3cm}
+Various versions of active logic have been proposed
+for modeling reasoning in hard real time [1]- [4], which
+make it possible to observe the agent’s reasoning process
+during its implementation. The creators of active logic
+emphasize its fundamental difference from traditional
+\\
+\footnotesize
+\begin{spacing}{0.9}
+This work was supported by the Russian Foundation for Fundamental
+Research (RFFR) and Belarusian Republican Foundation for Fundamental Research (BRFR) (projects 18-51-0007 Bel\_a, 20-57-00015
+Bel\_a)
+\end{spacing}
+
+
+\normalsize 
+\noindent non-monotonic systems, such as default logic, autoepistemic logic, etc. At present, there are dozens of
+different temporal logics, the purpose of which is to
+formalize the reasoning about time. The process of
+reasoning thus occurs as if out of time: the world as
+if stops while the system "thinks". For hard real-time
+systems, when solving problems, it is important to be
+able to estimate the amount of time available to them
+"to think" until it is too late to think. To do this, it is
+necessary to be able to correlate the steps and results
+of the conducted reasoning with the events occurring in
+the external environment. This type of reasoning is called
+reasoning situated in time. The General concept of active
+logic is described in [1]. As a model of deduction, active
+logic is characterized by language, many deductive rules,
+and many "observations". Reasoning situated in time is
+characterized by performing cycles of deduction called
+steps. Since the active logic is based on a discrete model
+of time, these steps play the role of a time standard –
+time is measured in steps. Agent knowledge is associated
+with the index of the step at which it was first obtained.
+The principal difference between active logic and other
+temporal epistemic logics is that temporal arguments are
+introduced into the language of agents own theories. A
+common drawback of most systems of Active Logic is the
+interpretation of time, in a sense, as the internal essence
+of these systems, the course of which is determined by
+the structure of the rules of inference used to obtain new
+formulas from existing ones. In all cases, the measure
+of time (standard) implicitly refers to the duration of
+the deductive cycle (=output step). Each execution of
+the deductive cycle corresponds to one "tick" of the
+virtual internal clock. It is also implicitly assumed that
+the duration of execution does not change from cycle to
+cycle, or that the changes are so small that they can be
+ignored. In reality, the duration of the deductive cycle is
+influenced by changes in the composition and structure
+of knowledge as a result of ongoing reasoning and
+\newpage
+\noindent observations of the external environment. In addition,
+the duration of deductive cycles can be influenced by
+random factors, such as power failures, in the operation
+of other technical systems, etc. in fact, the assumption of
+a constant duration of deductive cycles is akin to logical
+omniscience [5] and, like the latter, it often conflicts with
+reality. The report presents an approach in which time
+is treated as an external entity that is not related to the
+structure of knowledge and the speed of deductive cycles.
+Moreover, we propose a logical system (extended step
+theory [6], [7]) that integrates the concepts of active logic
+and logical programming, which allows us to optimize
+the relationship between the expressive capabilities of a
+cognitive agent and the complexity of calculations.
+\vspace{-0.5cm}
+\section{Main Results}
+\vspace{-0.3cm}
+
+
+
+Further, the main results in the field of modeling
+reasoning of a cognitive agent in the "hard" real-time
+mode, obtained by the authors to date, are considered.
+
+An analytical review of studies has been carried out,
+including studies on the capabilities of existing logical
+systems for formalizing reasoning (meta-reasoning) of
+a cognitive agent in hard real time; by methods of
+granulation of time, methods of solving the problem of
+logical omniscience.
+
+In the field of formalizing reasoning with limited time
+resources, there are several different directions, each of
+which is to one degree or another connected with solving
+the problem of logical omniscience, without which the
+conduct of reasoning (meta-reasoning), strictly limited
+in time, is not correct. Moreover, within the framework
+of existing epistemic logics, various restrictions on the
+ability of cognitive agents to logical inference (rational
+behavior) were proposed. This allowed us to solve the
+problem of logical omniscience, but at the same time
+there was a significant decrease in the capabilities of
+the cognitive agent, whose behavior was modeled. Today,
+only a few approaches to the creation of logical systems
+are known in which the problem of logical omniscience
+is solved without a serious limitation of the “mental
+abilities” of agents. One such example is the epistemic
+logic proposed by D. Ho [8]. It is based on the idea
+of introducing into the logical language special modal
+operators interpreted as “mental efforts” necessary to
+obtain any knowledge expressed in the form of logical
+formulas. This system overcomes the problem of logical omniscience. but it does not allow modeling the
+reasoning of a cognitive agent when it is necessary to
+determine whether it is able to solve a problem without
+going beyond certain time boundaries. Another example
+is active logic created by a team of specialists from
+Active Logic Grupp, and the like) [1]- [4]. It is a fairly
+general concept, which meets the logic presented in the
+report, a system based on the interpretation of reasoning
+as a process that proceeds in time. For this purpose, a
+temporal parameter is introduced into the metalanguage
+of logical systems that meet this concept. However, today
+there are a number of problems associated with active
+logic and other similar systems that hinder its actual
+practical application. Among the most important, it is
+necessary to highlight the absence of logical systems that
+meet the concept of active logic and have paraconsistent
+semantics, which makes it difficult to use active logic
+systems if there are contradictions in the information
+available; the lack of estimates of the computational
+complexity of reasoning and meta-reasoning, which are
+formalized by systems that meet the concept of active
+logic; lack of research results regarding the completeness and semantic consistency of systems that meet the
+concept of active logic. The logical system proposed in
+this report is largely free from these shortcomings due to
+the integration of formalisms of active logic and logical
+programming implemented in it.
+
+The concept of time granulation as a special case of
+information granulation is developed, and like information granules, this representation of time in the form of
+granules - indistinguishable objects. Formally, granules
+can be represented as a neighborhood of points, intervals,
+fuzzy sets, etc. The concept of “granulation of time”
+was first introduced in the formalism of TLC (Temporal
+Logic with Clocks) [9]. In the Active Logic formalism,
+time granulation is introduced by analogy with TLC
+and reduces to the fact that the duration of deductive
+cycles, assumed constant in classical active logic, is not
+performed for hard real-time systems.
+
+In reality, the duration of the deductive cycle is influenced by changes in the composition and structure of
+the agent’s knowledge as a result of his reasoning and
+observations of the external environment. In addition,
+random factors, such as power outages, other technical
+systems, etc., may affect the duration of deductive cycles.
+Also, “thinking abilities”, in this case, the duration of the
+computational cycles of different agents, ceteris paribus,
+can be different. To simulate the possibility of changing
+the duration, we propose a modification of the classical
+active logic - Step Logic (a lot of rules with a binary
+preference relation specified on it), which provides these
+capabilities by assigning the so-called. hours of model
+run, simulating the behavior of the system in various
+conditions (runs). A model run clock is a finite or infinite
+strictly increasing subsequence of a global clock whose
+members are interpreted as time instants (on a global
+clock) of the completion of deductive cycles, for example,
+<3, 5, 7, 10, ...>. By changing the model’s running hours,
+it is possible to simulate various operating conditions of
+the system and better reflect, for example, features such
+as an increase in the duration of deductive agent cycles
+as the amount of information known to him increases or
+in connection with the failure of part of his computing
+resources.
+\newpage
+The concepts of metacognition, counting the time
+spent on conducting reasoning, paraconsistency of agent
+metareasoning based on active logic formalisms are
+developed.
+
+The term metacognition was proposed in the works
+of J. Flavell [10] and is defined by him as the individual’s awareness of his cognitive processes and related strategies, or, in other words, as reasoning about
+reasoning, meaning “cognition second order". The difference between cognitive and metacognitive strategies
+should be noted. The former helps the individual to
+achieve a specific cognitive goal (for example, to understand the text), and the latter are used to monitor
+the achievement of this goal (for example, self-inquiry
+for understanding this text). Metacognitive components
+are usually activated when cognition fails (in this case,
+it may be a misunderstanding of the text from the first
+reading). Such failure activates metacognitive processes
+that allow the individual to correct the situation. Thus,
+metacognition is responsible for the active control and
+sequential regulation of cognitive processes. The concept
+of “metacognitive cycle” was proposed by M. Anderson
+[11] in the context of using the principles of metacognition to improve resistance to anomalies of a rational
+agent with a limited time resource. It is defined as the
+cyclical implementation of the following three stages:
+self-observation (monitoring); self-esteem (analysis of
+the revealed anomaly), self-improvement (regulation of
+the cognitive process). At the self-observation stage,
+meta-reasoning comes down to checking for the presence
+in the argument of an agent that solves a certain problem,
+formal signs of the presence of anomalies. These formal
+features are often direct contradictions in the agent’s
+knowledge (the presence of a counter pair of formulas
+expressing the agent’s current knowledge). At the selfassessment stage, the degree of threat to the quality of
+the agent’s functioning that the identified anomaly bears
+is established, and at the self-improvement stage, if the
+threat is real, a new strategy for solving the problem
+faced by the agent is selected.
+
+The countdown is achieved using the special predicate
+now (.) Introduced in the rules. Moreover, now (t) takes
+the value “true” if and only if t is the time moment of
+completion of the last of the deductive cycles already
+completed, that is, in other words, when t is the current
+time. At the same time, the time counting principle used
+in this project is free from the unrealistic assumption
+of a constant duration of deductive cycles inherent in
+other existing approaches to solving the problem of
+modeling metaraguments. As you know, logic is called
+paraconsistent if it can be the basis of conflicting, but
+not trivial theories. In turn, a contradictory theory is
+a logical theory in which a certain proposition and
+its negation are simultaneously provable, and a trivial
+theory is a contradictory logical theory in which any
+proposition is provable or formally: for any formulas A
+and B,\{A, ¬A $\vdash$ B\}. As a result of the analysis, it was
+found that the paraconsistency of classical active logic
+has not yet received a theoretical justification. At the
+same time, it was shown that the proposed step theory,
+based on the integration of the concepts of active logic
+and logical programming, is paraconsistent in the sense
+that the existence of contradictions in step theories does
+not lead to their destruction, as is the case in standard
+logical systems.
+
+A method has been developed for evaluating the time
+resource available for a cognitive agent based on the
+proposed logical system.
+
+It seems obvious that for agents with a strictly limited
+time resource, it is impossible to control this resource
+without correlating the results obtained in the course of
+the cognitive process (the process of solving the problem)
+with the times when these results were obtained. In
+accordance with the concept of step logic, this process,
+which proceeds in time, is characterized by the execution
+of deduction cycles (output steps).
+
+As noted earlier, the time is counted using the special
+single predicate now (.). The following inference rule
+applies to this predicate:
+\begin{equation}
+\frac{t : now(t)}{t + 1 : now(t + 1)},
+\end{equation}
+moreover, the now(t) formula is not inherited at the
+time instant (at the output step) t + 1, as is the case with
+“ordinary" formulas due to the inference rule
+\begin{equation}
+\frac{t : A}{t + 1 : A},
+\end{equation}
+Also, a formula of the form resource(t) is not inherited, obtained using the following inference rule, which
+allows you to evaluate a temporary resource at any time:
+\begin{equation}
+\frac{t : resource(t_1)}{t + 1 : resource(t_1-1)},
+\end{equation}
+where $t_1$ is the time resource available to the agent at
+time t.
+An important feature of step logic systems is the introduction of temporal parameters into the metalanguage,
+which determines their operational semantics, and the
+output steps play the role of a temporary reference. Agent
+knowledge is associated with the index of the step at
+which it was first acquired. This illustrates the inference
+rule, which is the "active" analogue of the modus ponens
+rule:
+\begin{equation}
+\frac{t : A, A	\vdash B}{t + 1 : B},
+\end{equation}
+This rule “says” that if at an instant t, an agent derived
+from reasoning or obtained from observing the external
+environment formulas A and A → B, then at time t +1,
+formula B will be derived.
+\end{document}
