@@ -1,0 +1,36 @@
+subject_domain_of_library <- sc_node_structure;;
+
+subject_domain_of_library => nrel_main_idtf: [Section. Subject domain of library]
+(*
+<-lang_en;;
+*);
+ [Раздел. Предметная область библиотеки]
+(*
+<-lang_ru;;
+*);;
+
+subject_domain_of_library <= nrel_section_decomposition:
+section_subject_domain_of_books;
+section_subject_domain_of_readers;
+section_subject_domain_of_newspapers;
+section_subject_domain_of_manuscripts;
+section_subject_domain_of_card_index;
+section_subject_domain_of_librarians;;
+
+subject_domain_of_library -> rrel_key_sc_element:
+nrel_books_lending;
+nrel_readers_card;
+nrel_fellow_worker;
+nrel_visitor;
+nrel_author;
+nrel_registration_number;
+nrel_the_year_of_publishing;
+nrel_annotation;
+nrel_date_of_issue;
+concept_libraries;
+concept_printed_editions;
+concept_readers;
+subject_domain_of_library;;
+
+subject_domain_of_library <- non_atomic_section;;
+

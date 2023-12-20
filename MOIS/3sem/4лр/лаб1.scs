@@ -1,0 +1,22 @@
+geometrical_problem <- sc_node_class;; 
+  
+geometrical_problem -> problem_1_2(* -> [* 
+
+point <- sc_node_class;; circle <- sc_node_class;; x <- sc_node_class;; unknown_value <- sc_node_class;; parametr <- sc_node_class;; length <- sc_node_class;; 48 <- sc_node_class;; 
+24 <- sc_node_class;; 20 <- sc_node_class;; line_segment <- sc_node_class;; 
+
+nrel_perpendicular_from_the_center <- sc_node_norole_relation;; nrel_center <- sc_node_norole_relation;; nrel_chord <- sc_node_norole_relation;; nrel_boundary_point <- sc_node_norole_relation;;  
+
+point -> O;; point -> H;; point -> M;; circle_w -> circle;; x -> OM;; unknown_value -> x;; parametr -> length;; length -> 24;; length -> 48;; 48 -> CD;; length -> 20;; length -> x;; 24 -> AB;; 20 -> OH;; line_segment -> OH;; line_segment -> AB;; line_segment -> CD;; line_segment -> OM;;
+
+AB => nrel_perpendicular_from_the_center: OH;;
+CD => nrel_perpendicular_from_the_center: OM;;
+circle_w => nrel_center: O;;
+circle_w => nrel_chord: AB;;
+circle_w => nrel_chord: CD;;
+OH => nrel_boundary_point: H;;
+OH => nrel_boundary_point: O;;
+OM => nrel_boundary_point: O;;
+OM => nrel_boundary_point: M;;
+  
+*];; *);;

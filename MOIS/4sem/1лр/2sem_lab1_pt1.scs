@@ -1,0 +1,43 @@
+subject_domain_of_library <- sc_node_structure;;
+
+subject_domain_of_library => nrel_system_idtf: [subject_domain_of_library];;
+
+subject_domain_of_library => nrel_main_idtf: [Предметная область библиотеки]
+	(*
+	<- lang_ru;;
+	*); [Subject domain of library]
+	(*
+	<- lang_en;;
+	*);;
+
+subject_domain_of_library => nrel_private_subject_domain:
+subject_domain_of_books;
+subject_domain_of_readers;
+subject_domain_of_newspapers;
+subject_domain_of_manuscripts;
+subject_domain_of_card_index;
+subject_domain_of_librarians;;
+
+subject_domain_of_library <= nrel_private_subject_domain:
+subject_domain_of_cultural_institution;;
+
+subject_domain_of_library -> rrel_maximum_studied_object_class:
+concept_libraries ;;
+
+subject_domain_of_library -> rrel_not_maximum_studied_object_class:
+concept_printed_editions;
+concept_readers;;
+
+subject_domain_of_library -> rrel_explored_relation:
+nrel_books_lending;
+nrel_readers_card;
+nrel_fellow_worker;
+nrel_visitor;
+nrel_author;
+nrel_registration_number;
+nrel_the_year_of_publishing;
+nrel_annotation;
+nrel_date_of_issue;;
+
+subject_domain_of_library <- subject_domain;;
+

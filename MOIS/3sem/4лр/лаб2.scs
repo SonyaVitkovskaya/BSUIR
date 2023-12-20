@@ -1,0 +1,152 @@
+concept_house <- sc_node_class;;
+
+concept_house => nrel_main_idtf: [house]
+	(*
+		<-lang_en;;
+	*);;
+concept_house => nrel_main_idtf: [дом]
+	(*
+		<-lang_ru;;
+	*);;
+concept_house => nrel_idtf: [жилище]
+	(*
+		<-lang_ru;;
+	*);;
+concept_house => nrel_idtf: [dwelling]
+	(*
+		<-lang_en;;
+	*);;	
+
+human <- sc_node_class;;
+animal <- sc_node_class;;
+building <- sc_node_class;;
+
+concept_house
+<- rrel_key_sc_element: ...
+	(*
+		<- sc_definition;;
+		=> nrel_main_idtf: [Опр. Дом] 
+			(* <- lang_ru;; *) ;;
+		<= nrel_sc_text_translation: ...
+			(*	
+				-> rrel_example: [Жилое здание, приспособленное для обитания человека и некоторых видов животных]
+				(*<-lang_ru;;*);;
+			*);;
+		=> nrel_using_constants: ...
+			(* <-human;animal;building;; *);;
+{;}
+	*);;
+
+brick_houses <- sc_node_class;;
+panel_houses <- sc_node_class;;
+
+
+
+concept_house <- rrel_key_sc_element: ...
+	(*
+		<- sc_statement;;
+		=> nrel_main_idtf: [Утв.1 О доме] 
+			(* <- lang_ru;; *) ;;
+		<= nrel_sc_text_translation: ...
+			(*	
+				-> rrel_example: [Дома из кирпича ценятся больше панельных, так как у них лучше шумоизоляция и они теплее]
+				(*<-lang_ru;;*);;
+			*);;
+		=> nrel_using_constants: ...
+			(* <- brick_houses; panel_houses;; *);;
+	*);;
+
+buildings <- sc_node_class;;
+
+buildings => nrel_include: concept_house;;
+
+
+concept_house -> rrel_example: mansion;; 
+
+
+
+
+
+nrel_annexe <- sc_node_norole_relation;;
+
+nrel_annexe => nrel_main_idtf: [annexe*]
+	(*
+		<-lang_en;;
+	*);;
+nrel_annexe => nrel_main_idtf: [пристройка*]
+	(*
+		<-lang_ru;;
+	*);;
+nrel_annexe => nrel_idtf: [флигель*]
+	(*
+		<-lang_ru;;
+	*);;
+nrel_annexe => nrel_idtf: [outbuilding*]
+	(*
+		<-lang_en;;
+	*);;	
+
+
+building <- sc_node_class;;
+rrel_capital_wall <- sc_node_role_relation;;
+
+nrel_annexe <- rrel_key_sc_element: ...
+	(*
+		<- sc_definition;;
+		=> nrel_main_idtf: [Опр.пристройка] 
+			(* <- lang_ru;; *) ;;
+		<= nrel_sc_text_translation: ...
+			(*	
+				-> rrel_example: [часть здания, расположенная вне контура его капитальных наружных стен, является вспомогательной по отношению к зданию и имеющая с ним одну (или более) общую капитальную стену]
+				(*<-lang_ru;;*);;
+			*);;
+		=> nrel_using_constants: ...
+			(* <- building;rrel_capital_wall;; *);;
+	*);;
+
+nrel_be_in_front_of <- sc_node_norole_relation;;
+door <- sc_node_class;;
+building <- sc_node_class;;
+porch <- sc_node_class;;
+
+
+
+
+nrel_annexe <- rrel_key_sc_element: ...
+	(*
+		<- sc_statement;;
+		=> nrel_main_idtf: [Утв.1 О пристройке] 
+			(* <- lang_ru;; *) ;;
+		<= nrel_sc_text_translation: ...
+			(*	
+				-> rrel_example: [Преподаватели занимаются обучением студентов в ВУЗах]
+				(*<-lang_ru;;*);;
+			*);;
+		=> nrel_using_constants: ...
+			(* <- nrel_be_in_front_of; door; building; porch;; *);;
+	*);;
+	
+..class_node <- sc_node_class;;
+arity -> ..class_node 
+	(* 
+		=> nrel_measuring: 2 (* <- number;; *);;
+		-> nrel_annexe;;
+	*);;
+
+symmetric_relation -|> nrel_annexe;;
+reflexive_relation -|> nrel_annexe;;
+transitive_relation -> nrel_annexe;;
+oriented_relation -> nrel_annexe;;
+
+
+premises <- sc_node_class;;
+premises -> veranda;;
+premises -> house;;
+house => nrel_annexe: veranda;;
+
+
+nrel_annexe => nrel_second_domain: premises;;
+nrel_annexe => nrel_first_domain: premises;;
+
+//?
+nrel_annexe => nrel_domain_of_definition: premises;;
