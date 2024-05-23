@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ву</title>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <style>
+        body {
+            background-color: #29282b;
+        }
+
+        nav {
+            background-color: #2f2e31;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            padding: 0 20px; 
+        }
+
+        .navbar a {
+            color: #c0c0c0;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .navbar b {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .cell {
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .content {
+            margin-top: 30px; 
+            display: flex;
+            flex-direction: row;
+        }
+
+        .canvas {
+            padding-left: 20px;
+            display: grid;
+            grid-template-columns: repeat(130, 10px);
+            grid-template-rows: repeat(65, 10px);
+            margin-right: 20px; 
+        }
+
+        .palette-container {
+            flex-wrap: wrap;
+        }
+        .palette-column {
+            width: 90px; 
+        }
+        .buttons-column {
+            width: 90px; 
+            margin-top: 6px;
+        }
+        .palette-button {
+            width: 40px;
+            height: 40px;
+            margin: 1px;
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .icon-button {
+            background-color: transparent;
+            margin-top: 5px;
+            width: 40px;
+            height: 40px;
+            margin: 1px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .icon-button img {
+            width: 35px;
+            height: 35px; 
+            margin-top: -2px;
+            margin-left: -6px;
+        }
+
+        .selected {
+            border: 3px solid #29282b;
+        }
+
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a href="{{ url_for('algorithm_1') }}">Алгоритм ЦДА</a>
+            <a href="{{ url_for('algorithm_2') }}">Алгоритм Брезенхема</a>
+            <b href="{{ url_for('algorithm_3') }}">Алгоритм Ву</b>
+        </div>
+
+
+    </nav>
+
+
+    <div class="content">
+        <div class="canvas">
+            {% for row in range(65, -1, -1) %}
+                {% for col in range(130) %}
+                    <div class="cell" onclick="changeColor(this, {{ row }}, {{ col }})"></div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    
+        <div class="palette-container">
+            <div class="palette-column">
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: white;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: black;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #c0c0c0;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #808080;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ff0000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #800000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ffff00;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #808000;"></button>
+            </div>
+            <div class="palette-column">
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #03ff00;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #008000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #03ffff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #008080;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #0000ff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #00007f;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ff00ff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #800080;"></button>
+            </div>
+            <div class="buttons-column">
+                <a href="{{ url_for('algorithm_1') }}">
+                    <button class="icon-button" style="border: 3px solid #29282b;">
+                        <img src="{{ url_for('static', filename='images/line.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('circle') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/circle.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('ellipse') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/ellipse.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('parabola') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/parabola.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('hyperbola') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/hyperbola.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('hermite') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/curve.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('objects_3d') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/3d.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_graham') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/polygon.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_filling_algorithm_1') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/polygon_filled.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_delaunay') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/triangulation.png') }}">
+                    </button>
+                </a>
+            </div>
+        </div>
+
+
+
+    </div>
+    
+    <script>
+        var picked_color = "rgb(0, 0, 0)"; 
+        var dots_count = 0;
+        var coordinates_1 = { row: 0, col: 0 };
+        var coordinates_2 = { row: 0, col: 0 };
+
+        function selectPalette(button) {
+            var buttons = document.querySelectorAll('.palette-button');
+            buttons.forEach(function(btn) {
+                btn.classList.remove('selected');
+            });
+            button.classList.add('selected');
+            picked_color = button.style.backgroundColor;
+        }
+
+        function changeColor(cell, row, col) {
+            if (dots_count < 2) {
+                cell.style.backgroundColor = picked_color;
+                dots_count++;
+
+                if (dots_count === 1) {
+                    coordinates_1.row = row;
+                    coordinates_1.col = col;
+                } else if (dots_count === 2) {
+                    coordinates_2.row = row;
+                    coordinates_2.col = col;
+                    handle_duplicates(coordinates_1, coordinates_2);
+                }
+            }
+        }
+
+        function drawPixel(connected_dots) {
+            connected_dots.forEach(dot => {
+                let x = dot[0];
+                let y = dot[1];
+                var cells = document.querySelectorAll('.cell');
+                var cellIndex = (130 * 66) - (y * 130) - (130 - x);
+                cells[cellIndex].style.backgroundColor = picked_color;
+            });
+        }
+
+        function take_pair(){
+            if (picked_color == "#ffffff" || picked_color == "rgb(255, 255, 255)"){ return "#ffffff"; }
+            if (picked_color == "#000000" || picked_color == "rgb(0, 0, 0)"){return "#444444"}
+            if (picked_color == "#c0c0c0" || picked_color == "rgb(192, 192, 192)"){return "#e6e4e4"}
+            if (picked_color == "#808080" || picked_color == "rgb(128, 128, 128)"){return "#a3a3a3"}
+            if (picked_color == "#ff0000" || picked_color == "rgb(255, 0, 0)"){return "#f56767"}
+            if (picked_color == "#800000" || picked_color == "rgb(128, 0, 0)"){return "#a82d2d"}
+            if (picked_color == "#ffff00" || picked_color == "rgb(255, 255, 0)"){return "#f2f288"}
+            if (picked_color == "#808000" || picked_color == "rgb(128, 128, 0)"){return "#a8a834"}
+            if (picked_color == "#03ff00" || picked_color == "rgb(3, 255, 0)"){return "#81f781"}
+            if (picked_color == "#008000" || picked_color == "rgb(0, 128, 0)"){return "#31a331"}
+            if (picked_color == "#03ffff" || picked_color == "rgb(3, 255, 255)"){return "#91ffff"}
+            if (picked_color == "#008080" || picked_color == "rgb(0, 128, 128)"){return "#5bbaba"}
+            if (picked_color == "#0000ff" || picked_color == "rgb(0, 0, 255)"){return "#6b6bfa"}
+            if (picked_color == "#00007f" || picked_color == "rgb(0, 0, 127)"){return "#4848a8"}
+            if (picked_color == "#ff00ff" || picked_color == "rgb(255, 0, 255)"){return "#fa91fa"}
+            if (picked_color == "#800080" || picked_color == "rgb(128, 0, 128)"){return "#b046b0"}
+        }
+
+        function wu_line(x1, y1, x2, y2) {
+
+            function plot(x, y, vol) {
+                console.log(arguments)
+                var cells = document.querySelectorAll('.cell');
+                var cellIndex = (130 * 66) - (y * 130) - (130 - x);
+                if (vol == 0.5){color = take_pair();}
+                else{color = picked_color;}
+                cells[cellIndex].style.backgroundColor = color;
+            }
+
+            function frac(x) { return x - Math.floor(x);}
+            function rfrac(x) { return 1 - frac(x); }
+        
+            swapped = Math.abs(y2 - y1) > Math.abs(x2 - x1);
+            if (swapped){  
+                [x1, y1] = [y1, x1]; 
+                [x2, y2] = [y2, x2]; 
+            }
+            if (x1 > x2) {
+                [x1, x2] = [x2, x1];
+                [y2, y1] = [y1, y2]; 
+            }
+
+            let dx = x2 - x1;
+            let dy = y2 - y1;
+            var gradient = dy/dx;
+            
+            let xend = Math.round(x1);
+            let yend = y1 + gradient * (xend - x1);
+            let xgap = rfrac(x1 + 0.5);
+            let xpxl1 = xend;
+            let ypxl1 = Math.floor(yend);
+
+            if (swapped){
+                plot(ypxl1, xpxl1, 1);
+                plot(ypxl1+1, xpxl1, 0.5);
+                
+            }
+            else{
+                plot(xpxl1, ypxl1, 1);
+                plot(xpxl1, ypxl1 + 1, 0.5);
+            }
+            var intery = yend + gradient;
+
+            xend = Math.round(x2);
+            yend = y2 + gradient * (xend - x2);
+            xgap = frac(x2 + 0.5);
+            let xpxl2 = xend;
+            let ypxl2 = Math.floor(yend);
+            if (swapped){
+                plot(ypxl2, xpxl2, 1);
+                plot(ypxl2+1, xpxl2, 0.5);
+            }
+            else{
+                plot(xpxl2, ypxl2, 1);
+                plot(xpxl2, ypxl2 + 1, 0.5);
+            }
+
+            if (swapped){
+                for (let x = xpxl1 + 1; x < xpxl2; x++) {
+                    plot(Math.floor(intery), x, 1);
+                    plot(Math.floor(intery) + 1, x, 0.5);
+                    intery += gradient;
+            }}
+            else{
+                for (let x = xpxl1 + 1; x < xpxl2; x++) {
+                    plot(x, Math.floor(intery), 1);
+                    plot(x, Math.floor(intery) + 1, 0.5);
+                    intery += gradient;
+            }}
+  
+
+ 
+}
+        function check(x1,y1,x2,y2){
+            let dx = x2 - x1;
+            let dy = y2 - y1;
+            connected_dots = [];
+            if (dx == 0){
+                if (y1 > y2){[y1, y2]=[y2, y1];}
+                for (var i = 0; i <= Math.abs(dy); i++) {
+                    connected_dots.push([x1, y1+i]);
+                }
+                return drawPixel(connected_dots);
+            }
+
+            else if (dy == 0){
+                if (x1 > x2){[x1, x2] = [x2, x1];}
+                for (var i = 0; i <= Math.abs(dx); i++) {
+                    connected_dots.push([x1+i, y1]);
+                }
+                return drawPixel(connected_dots);
+            }
+
+            else if( Math.abs(dx) ==  Math.abs(dy)){
+                var xsign = 1;
+                var ysign = 1;
+                if (dx < 0){xsign = -1;}
+                if (dy < 0){ysign = -1;}
+                for (var i = 0; i <= Math.abs(dx); i++) {
+                    connected_dots.push([x1+i*xsign, y1+i*ysign]);
+                }
+                return drawPixel(connected_dots);
+            }
+            return wu_line(x1, y1, x2, y2);
+        }
+        
+        function handle_duplicates(coordinates_1, coordinates_2) {
+            let x1 = coordinates_1.col 
+            let y1 = coordinates_1.row
+            let x2 = coordinates_2.col 
+            let y2 = coordinates_2.row
+            check(x1, y1, x2, y2);
+        }
+
+        window.onload = function() {
+            var blackButton = document.querySelector('.palette-button[style="background-color: black;"]');
+            selectPalette(blackButton);
+        };
+
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' || event.key === 'r' || event.key === 'R') {
+                location.reload();
+            }
+        });
+        
+    </script>
+</body>
+</html>
+
+
+

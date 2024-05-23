@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЦДА</title>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <style>
+        body {
+            background-color: #29282b;
+        }
+
+        nav {
+            background-color: #2f2e31;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            padding: 0 20px; 
+        }
+
+        .navbar a {
+            color: #c0c0c0;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .navbar b {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .cell {
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .content {
+            margin-top: 30px; 
+            display: flex;
+            flex-direction: row;
+        }
+
+        .canvas {
+            padding-left: 20px;
+            display: grid;
+            grid-template-columns: repeat(130, 10px);
+            grid-template-rows: repeat(65, 10px);
+            margin-right: 20px; 
+        }
+
+        .palette-container {
+            flex-wrap: wrap;
+        }
+        .palette-column {
+            width: 90px; 
+        }
+        .palette-button {
+            width: 40px;
+            height: 40px;
+            margin: 1px;
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .selected {
+            border: 3px solid #29282b;
+        }
+
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a href="{{ url_for('algorithm_1') }}">Алгоритм ЦДА</a>
+            <a href="{{ url_for('algorithm_2') }}">Алгоритм Брезенхема</a>
+            <b href="{{ url_for('algorithm_3') }}">Алгоритм Ву</b>
+        </div>
+    </nav>
+
+    <div class="content">
+        <div class="canvas">
+            {% for row in range(65, -1, -1) %}
+                {% for col in range(130) %}
+                    <div class="cell" onclick="changeColor(this, {{ row }}, {{ col }})"></div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    
+        <div class="palette-container">
+            <div class="palette-column">
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ffffff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #000000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #c0c0c0;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #808080;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ff0000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #800000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ffff00;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #808000;"></button>
+            </div>
+            <div class="palette-column">
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #03ff00;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #008000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #03ffff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #008080;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #0000ff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #00007f;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ff00ff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #800080;"></button>
+            </div>
+        </div>
+
+
+
+    </div>
+    
+    <script>
+        var picked_color = "rgb(0, 0, 0)"; 
+        var dots_count = 0;
+        var coordinates_1 = { row: 0, col: 0 };
+        var coordinates_2 = { row: 0, col: 0 };
+
+        function selectPalette(button) {
+            var buttons = document.querySelectorAll('.palette-button');
+            buttons.forEach(function(btn) {
+                btn.classList.remove('selected');
+            });
+            button.classList.add('selected');
+            picked_color = button.style.backgroundColor;
+        }
+
+        function changeColor(cell, row, col) {
+            if (dots_count < 2) {
+                cell.style.backgroundColor = picked_color;
+                dots_count++;
+
+                if (dots_count === 1) {
+                    coordinates_1.row = row;
+                    coordinates_1.col = col;
+                } else if (dots_count === 2) {
+                    coordinates_2.row = row;
+                    coordinates_2.col = col;
+                    handle_duplicates(coordinates_1, coordinates_2);
+                }
+            }
+        }
+
+        function drawPixel(connected_dots) {
+            connected_dots.forEach(dot => {
+                let x = dot[0];
+                let y = dot[1];
+                var cells = document.querySelectorAll('.cell');
+                var cellIndex = (130 * 66) - (y * 130) - (130 - x);
+                cells[cellIndex].style.backgroundColor = picked_color;
+            });
+        }
+
+        
+
+
+        function wu_line(x1, y1, x2, y2) {
+
+            function plot(x, y, vol) {
+                console.log(arguments)
+                var cells = document.querySelectorAll('.cell');
+                var cellIndex = (130 * 66) - (y * 130) - (130 - x);
+                var decimalNumber = Math.round(256 * vol - 1);
+
+                function componentToHex(f) {
+                    var hex = f.toString(16);
+                    return hex.length == 1 ? "0" + hex : hex;
+                }
+
+                function rgbToHex(str) {
+                    mass = str.split(", ");
+                    return "#" + componentToHex(parseInt(mass[0].slice(4))) + componentToHex(parseInt(mass[1])) + componentToHex(parseInt(mass[2].slice(0,-1))) + decimalNumber.toString(16);
+                }
+                cells[cellIndex].style.backgroundColor = rgbToHex(picked_color);
+            }
+
+            function frac(x) { return x - Math.floor(x);}
+            function rfrac(x) { return 1 - frac(x); }
+        
+            swapped = Math.abs(y2 - y1) > Math.abs(x2 - x1);
+            if (swapped){  
+                [x1, y1] = [y1, x1]; 
+                [x2, y2] = [y2, x2]; 
+            }
+            if (x1 > x2) {
+                [x1, x2] = [x2, x1];
+                [y2, y1] = [y1, y2]; 
+            }
+
+            let dx = x2 - x1;
+            let dy = y2 - y1;
+            var gradient = dy/dx;
+            
+            let xend = Math.round(x1);
+            let yend = y1 + gradient * (xend - x1);
+            let xgap = rfrac(x1 + 0.5);
+            let xpxl1 = xend;
+            let ypxl1 = Math.floor(yend);
+
+            if (swapped){
+                plot(ypxl1, xpxl1, rfrac(yend) * xgap);
+                plot(ypxl1+1, xpxl1, frac(yend) * xgap);
+            }
+            else{
+                plot(xpxl1, ypxl1, rfrac(yend) * xgap);
+                plot(xpxl1, ypxl1 + 1, frac(yend) * xgap);
+            }
+            var intery = yend + gradient;
+
+            xend = Math.round(x2);
+            yend = y2 + gradient * (xend - x2);
+            xgap = frac(x2 + 0.5);
+            let xpxl2 = xend;
+            let ypxl2 = Math.floor(yend);
+            if (swapped){
+                plot(ypxl2, xpxl2, rfrac(yend) * xgap);
+                plot(ypxl2+1, xpxl2, frac(yend) * xgap);
+            }
+            else{
+                plot(xpxl2, ypxl2, rfrac(yend) * xgap);
+                plot(xpxl2, ypxl2 + 1, frac(yend) * xgap);
+            }
+
+            if (swapped){
+                for (let x = xpxl1 + 1; x < xpxl2; x++) {
+                    a = 1; b = 0.5;
+                    plot(Math.floor(intery), x, a);
+                    plot(Math.floor(intery) + 1, x, b);
+                    intery += gradient;
+            }}
+            else{
+                for (let x = xpxl1 + 1; x < xpxl2; x++) {
+                    plot(x, Math.floor(intery), rfrac(intery));
+                    plot(x, Math.floor(intery) + 1, frac(intery));
+                    intery += gradient;
+            }}
+  
+
+ 
+}
+        function check(x1,y1,x2,y2){
+            let dx = x2 - x1;
+            let dy = y2 - y1;
+            connected_dots = [];
+            if (dx == 0){
+                if (y1 > y2){[y1, y2]=[y2, y1];}
+                for (var i = 0; i <= Math.abs(dy); i++) {
+                    connected_dots.push([x1, y1+i]);
+                }
+                return drawPixel(connected_dots);
+            }
+
+            else if (dy == 0){
+                if (x1 > x2){[x1, x2] = [x2, x1];}
+                for (var i = 0; i <= Math.abs(dx); i++) {
+                    connected_dots.push([x1+i, y1]);
+                }
+                return drawPixel(connected_dots);
+            }
+
+            else if( Math.abs(dx) ==  Math.abs(dy)){
+                var xsign = 1;
+                var ysign = 1;
+                if (dx < 0){xsign = -1;}
+                if (dy < 0){ysign = -1;}
+                for (var i = 0; i <= Math.abs(dx); i++) {
+                    connected_dots.push([x1+i*xsign, y1+i*ysign]);
+                }
+                return drawPixel(connected_dots);
+            }
+            return wu_line(x1, y1, x2, y2);
+        }
+        
+        function handle_duplicates(coordinates_1, coordinates_2) {
+            let x1 = coordinates_1.col 
+            let y1 = coordinates_1.row
+            let x2 = coordinates_2.col 
+            let y2 = coordinates_2.row
+            check(x1, y1, x2, y2);
+        }
+
+        window.onload = function() {
+            var blackButton = document.querySelector('.palette-button[style="background-color: black;"]');
+            selectPalette(blackButton);
+        };
+    </script>
+</body>
+</html>
+
+
+

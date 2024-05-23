@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Диаграмма Вороного</title>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <style>
+        body {
+            background-color: #29282b;
+        }
+
+        nav {
+            background-color: #2f2e31;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            padding: 0 20px; 
+        }
+
+        .navbar a {
+            color: #c0c0c0;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .navbar b {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .cell {
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .content {
+            margin-top: 30px; 
+            display: flex;
+            flex-direction: row;
+        }
+
+        .canvas {
+            padding-left: 20px;
+            display: grid;
+            grid-template-columns: repeat(130, 10px);
+            grid-template-rows: repeat(65, 10px);
+            margin-right: 20px; 
+        }
+
+        .palette-container {
+            flex-wrap: wrap;
+        }
+        .palette-column {
+            width: 90px; 
+        }
+        .buttons-column {
+            width: 90px; 
+            margin-top: 6px;
+        }
+        .palette-button {
+            width: 40px;
+            height: 40px;
+            margin: 1px;
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .icon-button {
+            background-color: transparent;
+            margin-top: 5px;
+            width: 40px;
+            height: 40px;
+            margin: 1px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .icon-button img {
+            width: 35px;
+            height: 35px; 
+            margin-top: -2px;
+            margin-left: -6px;
+        }
+
+        .selected {
+            border: 3px solid #29282b;
+        }
+
+        .plot-button {
+            margin-right: 15px;
+            width: 70px;
+            height: 30px;
+            border-radius: 15px;
+            background-color: #484848;
+            color: white; 
+            border: 2px solid #484848;
+            font-size: 15px;
+            font-family: "Arial";
+            cursor: pointer;
+        }
+
+        .plot-button:hover {
+            color: white;
+            background-color: #29282b;
+            border: 2px solid #29282b;
+        }
+
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <a href="{{ url_for('polygon_delaunay') }}">Триангуляция Делоне</a>
+            <b href="{{ url_for('polygon_voronoi') }}">Диаграмма Вороного</b>
+        </div>
+        <button onclick="executeVoronoi()" class="plot-button">Plot</button>
+
+
+    </nav>
+
+
+    <div class="content">
+        <div class="canvas">
+            {% for row in range(65, -1, -1) %}
+                {% for col in range(130) %}
+                    <div class="cell" onclick="changeColor(this, {{ row }}, {{ col }})"></div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    
+        <div class="palette-container">
+            <div class="palette-column">
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: white;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: black;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #c0c0c0;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #808080;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ff0000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #800000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ffff00;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #808000;"></button>
+            </div>
+            <div class="palette-column">
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #03ff00;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #008000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #03ffff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #008080;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #0000ff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #00007f;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ff00ff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #800080;"></button>
+            </div>
+            <div class="buttons-column">
+                <a href="{{ url_for('algorithm_1') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/line.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('circle') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/circle.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('ellipse') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/ellipse.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('parabola') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/parabola.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('hyperbola') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/hyperbola.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('hermite') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/curve.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('objects_3d') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/3d.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_graham') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/polygon.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_filling_algorithm_1') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/polygon_filled.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_delaunay') }}">
+                    <button class="icon-button" style="border: 3px solid #29282b;">
+                        <img src="{{ url_for('static', filename='images/triangulation.png') }}">
+                    </button>
+                </a>
+            </div>
+        </div>
+
+
+
+    </div>
+    
+    <script>
+        var picked_color = "black"; 
+        var dots_count = 0;
+        var coordinates_1 = { row: 0, col: 0 };
+        var coordinates_2 = { row: 0, col: 0 };
+        var dots = [];
+
+        function selectPalette(button) {
+            var buttons = document.querySelectorAll('.palette-button');
+            buttons.forEach(function(btn) {
+                btn.classList.remove('selected');
+            });
+            button.classList.add('selected');
+            picked_color = button.style.backgroundColor;
+        }
+
+        function changeColor(cell, row, col) {
+            cell.style.backgroundColor = picked_color;
+            if (picked_color !== '#29282b') {
+                dots.push({x: col, y: row});
+            }
+        }
+
+        function drawPixel(x, y) {
+            var cells = document.querySelectorAll('.cell');
+            var cellIndex = (130 * 66) - (y * 130) - (130 - x);
+            cells[cellIndex].style.backgroundColor = picked_color;
+        }
+
+        function distance(point1, point2) {
+            var dx = point1.x - point2.x;
+            var dy = point1.y - point2.y;
+            return Math.round(Math.sqrt(dx * dx + dy * dy));
+            } 
+
+        function executeVoronoi(){
+            pairs = []
+            for (var i = 0; i < 66; i++){
+                for (var j = 0; j < 130; j++){
+                    distances = [];
+                    min = 10000;
+                    for (var dot_i = 0; dot_i < dots.length; dot_i ++){
+                        dist = distance({x: j, y: i}, {x: dots[dot_i].x, y: 65-dots[dot_i].y})
+                        if (dist < min)  min = dist
+                        distances.push([dist, {x: dots[dot_i].x, y: 65-dots[dot_i].y}])
+                    }
+                    min_distances = [];
+
+                    for (var elem_i = 0; elem_i < distances.length; elem_i ++){
+                        if (distances[elem_i][0] == min || distances[elem_i][0] == min+1 ) {
+                            min_distances.push(distances[elem_i][1]);
+                            if (min_distances.length > 1){
+                                if (min_distances[0].x < min_distances[1].x)  pairs.push({first: min_distances[0], second: min_distances[1], dot: [j, 65-i]});
+                                else if (min_distances[0].x > min_distances[1].x) pairs.push({first: min_distances[1], second: min_distances[0], dot: [j, 65-i]});
+                                else if (min_distances[0].y > min_distances[1].y) pairs.push({first: min_distances[1], second: min_distances[0], dot: [j, 65-i]});
+                                else pairs.push({first: min_distances[0], second: min_distances[1], dot: [j, 65-i]});
+                                }                            
+                        }
+                    }        
+                }
+            }
+            while(pairs.length > 0){
+                first_ = pairs[0]
+                last = []
+                for (var j = 0; j < pairs.length; j++){
+                    if (pairs[j].first.x == first_.first.x && pairs[j].first.y == first_.first.y && pairs[j].second.x == first_.second.x && pairs[j].second.y == first_.second.y){
+                        last = pairs[j];
+                        pairs.splice(j, 1);
+                        j--;
+                    }
+                }
+                dda_line(first_.dot, last.dot)
+
+            }
+
+
+
+        }
+
+        function dda_line(coordinates_x, coordinates_y) {
+            x1 = coordinates_x[0]
+            y1 = coordinates_x[1]
+            x2 = coordinates_y[0]
+            y2 = coordinates_y[1]
+            let dx = x2 - x1;
+            let dy = y2 - y1;   
+            let steps = Math.max(Math.abs(dx), Math.abs(dy));
+            let x_increment = dx / steps;
+            let y_increment = dy / steps;
+
+            let connected_dots = [];
+            var x = x1;
+            var y = y1;
+
+            for (var i = 0; i <= steps; i++) {
+                connected_dots.push([Math.round(x), Math.round(y)]);
+                x = x + x_increment;
+                y = y + y_increment;
+            }
+
+            connected_dots.forEach(dot => {
+                let x = dot[0];
+                let y = dot[1];
+                drawPixel(x, y, picked_color);
+            });
+        }
+        
+
+
+
+        window.onload = function() {
+            var blackButton = document.querySelector('.palette-button[style="background-color: black;"]');
+            selectPalette(blackButton);
+        };
+
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' || event.key === 'r' || event.key === 'R') {
+                location.reload();
+            }
+        });
+
+    </script>
+</body>
+</html>
+
+
+

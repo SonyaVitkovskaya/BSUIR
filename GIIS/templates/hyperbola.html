@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Гипербола</title>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <style>
+        body {
+            background-color: #29282b;
+        }
+
+        nav {
+            background-color: #2f2e31;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            padding: 0 20px; 
+        }
+
+        .navbar a {
+            color: #c0c0c0;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .navbar b {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+            font-family: "Times New Roman", Times, serif;
+            margin-right: 496px;
+        }
+
+        .cell {
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .content {
+            margin-top: 30px; 
+            display: flex;
+            flex-direction: row;
+        }
+
+        .canvas {
+            padding-left: 20px;
+            display: grid;
+            grid-template-columns: repeat(130, 10px);
+            grid-template-rows: repeat(65, 10px);
+            margin-right: 20px; 
+        }
+
+        .palette-container {
+            flex-wrap: wrap;
+        }
+        .palette-column {
+            width: 90px; 
+        }
+        .buttons-column {
+            width: 90px; 
+            margin-top: 6px;
+        }
+        .palette-button {
+            width: 40px;
+            height: 40px;
+            margin: 1px;
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .icon-button {
+            background-color: transparent;
+            margin-top: 5px;
+            width: 40px;
+            height: 40px;
+            margin: 1px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .icon-button img {
+            width: 35px;
+            height: 35px; 
+            margin-top: -2px;
+            margin-left: -6px;
+        }
+
+        .selected {
+            border: 3px solid #29282b;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-pair {
+            margin-left: 20px;
+        }
+
+        .input-pair span {
+            color: white;
+            margin-right: 5px;
+            font-size: 15px;
+            font-family: "Arial";
+        }
+
+        .input-pair input[type="text"] {
+            width: 40px;
+            height: 20px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 2px solid #484848;
+            background-color: #484848; 
+            text-align: center;
+            color: white; 
+            font-size: 15px;
+            font-family: "Arial";
+        }
+
+        .plot-button {
+            margin-left: 36px;
+            width: 70px;
+            height: 30px;
+            border-radius: 15px;
+            background-color: #484848;
+            color: white; 
+            border: 2px solid #484848;
+            font-size: 15px;
+            font-family: "Arial";
+            cursor: pointer;
+        }
+
+        .plot-button:hover {
+            color: white;
+            background-color: #29282b;
+            border: 2px solid #29282b;
+        }
+
+
+        .play-button-next {
+            border: 3px solid #484848;
+            background-color: transparent;
+            border: none;
+            margin-right: 5px;
+        }
+
+        .play-button-next img{
+            width: 15px;
+            height: 15px;
+        }
+
+        .play-button-previous {
+            border: 3px solid #484848;
+            background-color: transparent;
+            border: none;
+            margin-right: 5px;
+        }
+
+        .play-button-previous img{
+            width: 15px;
+            height: 15px;
+        }
+
+        .dev-mode {
+            display: flex;
+            flex-direction: row;
+            margin-left: 310px;
+        }
+
+        .play-container {
+            margin-left: 70px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .dev-text {
+            color: white;
+            font-size: 18px;
+            font-family: "Arial";
+            margin-left: 50px;
+        }
+
+        .dev-text-value {
+            color: white;
+            font-size: 18px;
+            font-family: "Arial";
+            margin-left: 20px;
+            width: 40px;
+        }
+
+        .dev-text-plot {
+            color: white;
+            font-size: 18px;
+            font-family: "Arial";
+            margin-left: 60px;
+        }
+
+        .dev-text-plot-value {
+            color: white;
+            font-size: 18px;
+            font-family: "Arial";
+            margin-left: 20px;
+            width: 40px;
+        }
+
+        .text-input-row {
+            display: flex;
+            flex-direction: row;
+            margin-top: 25px;
+        }
+
+        .dev-mode-button {
+            background-color: transparent;
+            margin-top: 5px;
+            width: 40px;
+            height: 40px;
+            margin-left: 61px;
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .dev-mode-button img {
+            width: 35px;
+            height: 35px; 
+            margin-top: -2px;
+            margin-left: -6px;
+            background-color: transparent;
+
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <b href="{{ url_for('hyperbola') }}">Алгоритм генерации гиперболы</b>
+            <div class="input-pair">
+                <span>x0:</span>
+                <input type="text" id="x0_input" placeholder="0">
+            </div>
+            <div class="input-pair">
+                <span>y0:</span>
+                <input type="text" id="y0_input" placeholder="0">
+            </div>
+            <div class="input-pair">
+                <span>a:</span>
+                <input type="text" id="a_input" placeholder="5">
+            </div>
+            <div class="input-pair">
+                <span>b:</span>
+                <input type="text" id="b_input" placeholder="5">
+            </div>
+            <button onclick="plot()" class="plot-button">Plot</button>
+
+            <p href="">
+                <button class="dev-mode-button" onclick="toggleDevMode()">
+                    <img src="{{ url_for('static', filename='images/tools_gray.png') }}">
+                </button>
+            </p>
+        </div>
+    </nav>
+
+    <div class="content">
+        <div class="con-container">
+            <div class="canvas">
+                {% for row in range(65, -1, -1) %}
+                    {% for col in range(130) %}
+                        <div class="cell" onclick="changeColor(this, {{ row }}, {{ col }})"></div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+
+            <div class="dev-mode">
+                <div class="text-input-row">
+             
+                    <span id="i_label" class="dev-text">i:</span>
+                    <span id="i_value" class="dev-text-value"></span>
+            
+                    <!--<span id="e_label" class="dev-text">e:</span>
+                    <span id="e_value" class="dev-text-value"></span>-->
+                
+                    <span id="x_label" class="dev-text">x:</span>
+                    <span id="x_value" class="dev-text-value"></span>
+            
+                    <span id="y_label" class="dev-text">y:</span>
+                    <span id="y_value" class="dev-text-value"></span>
+                    
+                    <span id="plot_label" class="dev-text-plot">Plot(x, y):</span>
+                    <span id="plot_value" class="dev-text-plot-value"></span>
+           
+                </div>
+
+                <div class="play-container">
+                    <p id="next_button" href="">
+                        <button class="play-button-previous" onclick="previous_step()">
+                            <img src="{{ url_for('static', filename='images/play_left_gray.png') }}">
+                        </button>
+                    </p>
+                    <p id="previous_button" href="">
+                        <button class="play-button-next" onclick="next_step()">
+                            <img src="{{ url_for('static', filename='images/play_right_white.png') }}">
+                        </button>
+                    </p>
+                </div>
+    
+            </div>
+        </div>
+    
+    
+        <div class="palette-container">
+            <div class="palette-column">
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: white;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: black;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #c0c0c0;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #808080;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ff0000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #800000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ffff00;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #808000;"></button>
+            </div>
+            <div class="palette-column">
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #03ff00;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #008000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #03ffff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #008080;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #0000ff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #00007f;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ff00ff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #800080;"></button>
+            </div>
+            <div class="buttons-column">
+                <a href="{{ url_for('algorithm_1') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/line.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('circle') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/circle.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('ellipse') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/ellipse.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('parabola') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/parabola.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('hyperbola') }}">
+                    <button class="icon-button" style="border: 3px solid #29282b;">
+                        <img src="{{ url_for('static', filename='images/hyperbola.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('hermite') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/curve.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('objects_3d') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/3d.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_graham') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/polygon.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_filling_algorithm_1') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/polygon_filled.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_delaunay') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/triangulation.png') }}">
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        var picked_color = "black"; 
+        var x0 = 0;
+        var y0 = 0;
+        var a = 0;
+        var b = 0;
+        var saved_hyperbola_parameters = []
+        var saved_picked_color = ""
+        var saved_hyperbola = []
+        var current_iteration = 0;
+        var first_drawing = 0;
+
+        function selectPalette(button) {
+            var buttons = document.querySelectorAll('.palette-button');
+            buttons.forEach(function(btn) {
+                btn.classList.remove('selected');
+            });
+            button.classList.add('selected');
+            picked_color = button.style.backgroundColor;
+        }
+
+        function plot() {
+            var x0Value = document.getElementById('x0_input').value;
+            var y0Value = document.getElementById('y0_input').value;
+            var aValue = document.getElementById('a_input').value;
+            var bValue = document.getElementById('b_input').value;  
+
+            x0 = parseInt(x0Value) || 0;
+            y0 = parseInt(y0Value) || 0;
+            a = parseInt(aValue) || 5;
+            b = parseInt(bValue) || 5;
+
+            saved_hyperbola_parameters = [x0, y0, a, b]
+            drawHyperbola(x0, y0, a, b, picked_color);
+            first_drawing = first_drawing + 1;
+            
+            saved_picked_color = picked_color
+        }
+
+        function plotPoints(x0, y0, x, y, color) {
+            drawPixel(x0 + x, y0 + y, color);
+            drawPixel(x0 - x, y0 + y, color);
+            drawPixel(x0 + x, y0 - y, color);
+            drawPixel(x0 - x, y0 - y, color); 
+        }
+
+        function drawHyperbola(x0, y0, a, b, color){
+            let x = a; let y = 0;   
+            var i = 0;
+
+            let d = 2*a**2-2*a*b-b**2;         
+            while (y <= ((b**2*x / (a**2)) + 1) && (y<=66)){
+                plotPoints(x0, y0, x, y, color);
+                if(first_drawing == 0){
+                    saved_hyperbola.push([i, x, y])
+                    i++;
+                }
+                if (d < 0){d += 2 * a**2 * (2 * y + 3);}
+                else{
+                d += 2 * a**2 * (2 * y + 3) - 4 * b**2 * (x + 1);
+                x += 1;
+                }
+                y += 1;
+            }
+            while (x<=130){
+                plotPoints(x0, y0, x, y, color);
+                if(first_drawing == 0){
+                    saved_hyperbola.push([i, x, y])
+                    i++;
+                }
+                if (d < 0){d += 2 * b**2 * (3 + 2 * x);}
+                else{
+                    d += 2 * b**2 * (3 + 2 * x) - 4 * a**2 * (y + 1);
+                y += 1;
+                }
+                x += 1;
+            }
+        }
+
+        function drawPixel(x, y, color) {
+            x = x + 65;
+            y= y + 32;
+            if(x >= 0 && x<130 && y>=0 && y<66){
+                var cells = document.querySelectorAll('.cell');
+                var cellIndex = (130 * 66) - (y * 130) - (130 - x);
+                cells[cellIndex].style.backgroundColor = color;
+            }
+        }
+
+
+        window.onload = function() {
+            var redButton = document.querySelector('.palette-button[style="background-color: #ff0000;"]');
+            selectPalette(redButton);
+
+            var xaxis = 0;
+            var yaxis = 0;
+            while(xaxis < 130){
+                var cells = document.querySelectorAll('.cell');
+                var cellIndex = (130 * 66) - (32 * 130) - (130 - xaxis);
+                cells[cellIndex].style.backgroundColor = "black";
+                xaxis += 1;
+            }
+            while(yaxis < 66){
+                var cells = document.querySelectorAll('.cell');
+                var cellIndex = (130 * 66) - (yaxis * 130) - (130 - 65);
+                cells[cellIndex].style.backgroundColor = "black";
+                yaxis += 1;
+            }
+
+            hide_dev_mode('none')
+        };
+
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' || event.key === 'r' || event.key === 'R') {
+                location.reload();
+            }
+        });
+        
+        function hide_dev_mode(on_off) {
+
+            document.getElementById('next_button').style.display = on_off;
+            document.getElementById('previous_button').style.display = on_off;
+            document.getElementById('i_label').style.display = on_off;
+            //document.getElementById('e_label').style.display = on_off;
+            document.getElementById('x_label').style.display = on_off;
+            document.getElementById('y_label').style.display = on_off;
+            document.getElementById('plot_label').style.display = on_off;
+            document.getElementById('i_value').style.display = on_off;
+            //document.getElementById('e_value').style.display = on_off;
+            document.getElementById('x_value').style.display = on_off;
+            document.getElementById('y_value').style.display = on_off;
+            document.getElementById('plot_value').style.display = on_off;
+
+        }            
+
+        function set_dev_values(saved_hyperbola_iteration) {
+            document.getElementById('i_value').textContent = saved_hyperbola_iteration[0]
+            //document.getElementById('e_value').textContent = saved_ellipse_iteration[1]
+            document.getElementById('x_value').textContent = saved_hyperbola_iteration[1]
+            document.getElementById('y_value').textContent = saved_hyperbola_iteration[2]
+            document.getElementById('plot_value').textContent = `(${saved_hyperbola_iteration[1]},${saved_hyperbola_iteration[2]})`
+        }
+
+        function next_step() {
+            if(current_iteration != saved_hyperbola.length-1){
+                current_iteration = current_iteration + 1;
+                //drawPixel(saved_parabola_parameters[0], saved_parabola_parameters[1], saved_parabola[current_iteration][1], saved_parabola[current_iteration][2], picked_color);
+                //drawPixel(saved_parabola_parameters[0], saved_parabola_parameters[1], -saved_parabola[current_iteration][1], saved_parabola[current_iteration][2], picked_color);
+                plotPoints(saved_hyperbola_parameters[0], saved_hyperbola_parameters[1], saved_hyperbola[current_iteration][1], saved_hyperbola[current_iteration][2], saved_picked_color);
+                set_dev_values(saved_hyperbola[current_iteration]);
+                if(current_iteration == 1){
+                    var button = document.querySelector('.play-button-previous img');
+                    button.src = '{{ url_for("static", filename="images/play_left_white.png") }}';
+                }
+                if(current_iteration == saved_hyperbola.length-1){
+                    var button2 = document.querySelector('.play-button-next img');
+                    button2.src = '{{ url_for("static", filename="images/play_right_gray.png") }}';
+                }
+            }
+
+        }
+
+        function previous_step() {
+            if(current_iteration != 0){
+                //drawPixel(saved_parabola_parameters[0], saved_parabola_parameters[1], saved_parabola[current_iteration][1], saved_parabola[current_iteration][2], "#e5e5e8");
+                //drawPixel(saved_parabola_parameters[0], saved_parabola_parameters[1], -saved_parabola[current_iteration][1], saved_parabola[current_iteration][2], "#e5e5e8");
+                plotPoints(saved_hyperbola_parameters[0], saved_hyperbola_parameters[1], saved_hyperbola[current_iteration][1], saved_hyperbola[current_iteration][2], "#e5e5e8");
+                current_iteration = current_iteration - 1;
+                set_dev_values(saved_hyperbola[current_iteration]);
+
+                if(current_iteration == saved_hyperbola.length-2){
+                    var button2 = document.querySelector('.play-button-next img');
+                    button2.src = '{{ url_for("static", filename="images/play_right_white.png") }}';
+                }            
+                if(current_iteration == 0){
+                    var button2 = document.querySelector('.play-button-previous img');
+                    button2.src = '{{ url_for("static", filename="images/play_left_gray.png") }}';
+                }
+            }
+        }
+
+        function toggleDevMode() {
+            var button = document.querySelector('.dev-mode-button img');
+            var currentSrc = button.src;
+
+
+            if (currentSrc.includes('tools_gray')) {
+                if(first_drawing == 1){
+                    button.src = '{{ url_for("static", filename="images/tools_white.png") }}';
+                    hide_dev_mode('block')
+                    //drawCircle(saved_circle_parameters[0], saved_circle_parameters[1], saved_circle_parameters[2], "#e5e5e8")
+                    //plotPoints(saved_circle_parameters[0], saved_circle_parameters[1], saved_circle[0][2], saved_circle[0][3], saved_picked_color)
+                    //saved_parabola.shift();
+                    drawHyperbola(saved_hyperbola_parameters[0], saved_hyperbola_parameters[1], saved_hyperbola_parameters[2], saved_hyperbola_parameters[3], "#e5e5e8");
+                    plotPoints(saved_hyperbola_parameters[0], saved_hyperbola_parameters[1], saved_hyperbola[0][1], saved_hyperbola[0][2], saved_picked_color);
+                    //drawPixel(saved_parabola_parameters[0], saved_parabola_parameters[1], saved_parabola[0][1], saved_parabola[0][2], picked_color);
+                    set_dev_values(saved_hyperbola[0])
+
+                }
+            } else {
+                button.src = '{{ url_for("static", filename="images/tools_gray.png") }}';
+                //drawCircle(saved_circle_parameters[0], saved_circle_parameters[1], saved_circle_parameters[2], saved_picked_color)
+                drawHyperbola(saved_hyperbola_parameters[0], saved_hyperbola_parameters[1], saved_hyperbola_parameters[2], saved_hyperbola_parameters[3], picked_color);
+                hide_dev_mode('none')
+            }
+        }
+    </script>
+</body>
+</html>

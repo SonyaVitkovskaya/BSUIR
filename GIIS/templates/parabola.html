@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Парабола</title>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <style>
+        body {
+            background-color: #29282b;
+        }
+
+        nav {
+            background-color: #2f2e31;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            padding: 0 20px; 
+        }
+
+        .navbar a {
+            color: #c0c0c0;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .navbar b {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+            font-family: "Times New Roman", Times, serif;
+            margin-right: 600px;
+        }
+
+        .cell {
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .content {
+            margin-top: 30px; 
+            display: flex;
+            flex-direction: row;
+        }
+
+        .canvas {
+            padding-left: 20px;
+            display: grid;
+            grid-template-columns: repeat(130, 10px);
+            grid-template-rows: repeat(65, 10px);
+            margin-right: 20px; 
+        }
+
+        .palette-container {
+            flex-wrap: wrap;
+        }
+        .palette-column {
+            width: 90px; 
+        }
+        .buttons-column {
+            width: 90px; 
+            margin-top: 6px;
+        }
+        .palette-button {
+            width: 40px;
+            height: 40px;
+            margin: 1px;
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .icon-button {
+            background-color: transparent;
+            margin-top: 5px;
+            width: 40px;
+            height: 40px;
+            margin: 1px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .icon-button img {
+            width: 35px;
+            height: 35px; 
+            margin-top: -2px;
+            margin-left: -6px;
+        }
+
+        .selected {
+            border: 3px solid #29282b;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-pair {
+            margin-left: 20px;
+        }
+
+        .input-pair span {
+            color: white;
+            margin-right: 5px;
+            font-size: 15px;
+            font-family: "Arial";
+        }
+
+        .input-pair input[type="text"] {
+            width: 40px;
+            height: 20px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 2px solid #484848;
+            background-color: #484848; 
+            text-align: center;
+            color: white; 
+            font-size: 15px;
+            font-family: "Arial";
+        }
+
+        .plot-button {
+            margin-left: 36px;
+            width: 70px;
+            height: 30px;
+            border-radius: 15px;
+            background-color: #484848;
+            color: white; 
+            border: 2px solid #484848;
+            font-size: 15px;
+            font-family: "Arial";
+            cursor: pointer;
+        }
+
+        .plot-button:hover {
+            color: white;
+            background-color: #29282b;
+            border: 2px solid #29282b;
+        }
+
+        .play-button-next {
+            border: 3px solid #484848;
+            background-color: transparent;
+            border: none;
+            margin-right: 5px;
+        }
+
+        .play-button-next img{
+            width: 15px;
+            height: 15px;
+        }
+
+        .play-button-previous {
+            border: 3px solid #484848;
+            background-color: transparent;
+            border: none;
+            margin-right: 5px;
+        }
+
+        .play-button-previous img{
+            width: 15px;
+            height: 15px;
+        }
+
+        .dev-mode {
+            display: flex;
+            flex-direction: row;
+            margin-left: 290px;
+        }
+
+        .play-container {
+            margin-left: 70px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .dev-text {
+            color: white;
+            font-size: 18px;
+            font-family: "Arial";
+            margin-left: 50px;
+        }
+
+        .dev-text-value {
+            color: white;
+            font-size: 18px;
+            font-family: "Arial";
+            margin-left: 20px;
+            width: 40px;
+        }
+
+        .dev-text-plot {
+            color: white;
+            font-size: 18px;
+            font-family: "Arial";
+            margin-left: 60px;
+        }
+
+        .dev-text-plot-value {
+            color: white;
+            font-size: 18px;
+            font-family: "Arial";
+            margin-left: 20px;
+            width: 150px;
+        }
+
+        .text-input-row {
+            display: flex;
+            flex-direction: row;
+            margin-top: 25px;
+        }
+
+        .dev-mode-button {
+            background-color: transparent;
+            margin-top: 5px;
+            width: 40px;
+            height: 40px;
+            margin-left: 61px;
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .dev-mode-button img {
+            width: 35px;
+            height: 35px; 
+            margin-top: -2px;
+            margin-left: -6px;
+            background-color: transparent;
+
+        }
+
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <b href="{{ url_for('parabola') }}">Алгоритм генерации параболы</b>
+            <div class="input-pair">
+                <span>x0:</span>
+                <input type="text" id="x0_input" placeholder="0">
+            </div>
+            <div class="input-pair">
+                <span>y0:</span>
+                <input type="text" id="y0_input" placeholder="0">
+            </div>
+            <div class="input-pair">
+                <span>a:</span>
+                <input type="text" id="a_input" placeholder="5">
+            </div>
+            <button onclick="plot()" class="plot-button">Plot</button>
+
+            <p href="">
+                <button class="dev-mode-button" onclick="toggleDevMode()">
+                    <img src="{{ url_for('static', filename='images/tools_gray.png') }}">
+                </button>
+            </p>
+        </div>
+
+
+    </nav>
+
+
+    <div class="content">
+        <div class="con-container">
+            <div class="canvas">
+                {% for row in range(65, -1, -1) %}
+                    {% for col in range(130) %}
+                        <div class="cell" onclick="changeColor(this, {{ row }}, {{ col }})"></div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+
+            <div class="dev-mode">
+                <div class="text-input-row">
+             
+                    <span id="i_label" class="dev-text">i:</span>
+                    <span id="i_value" class="dev-text-value"></span>
+            
+                    <!--<span id="e_label" class="dev-text">e:</span>
+                    <span id="e_value" class="dev-text-value"></span>-->
+                
+                    <span id="x_label" class="dev-text">x:</span>
+                    <span id="x_value" class="dev-text-value"></span>
+            
+                    <span id="y_label" class="dev-text">y:</span>
+                    <span id="y_value" class="dev-text-value"></span>
+                    
+                    <span id="plot_label" class="dev-text-plot">Plot(x, y):</span>
+                    <span id="plot_value" class="dev-text-plot-value"></span>
+           
+                </div>
+
+                <div class="play-container">
+                    <p id="next_button" href="">
+                        <button class="play-button-previous" onclick="previous_step()">
+                            <img src="{{ url_for('static', filename='images/play_left_gray.png') }}">
+                        </button>
+                    </p>
+                    <p id="previous_button" href="">
+                        <button class="play-button-next" onclick="next_step()">
+                            <img src="{{ url_for('static', filename='images/play_right_white.png') }}">
+                        </button>
+                    </p>
+                </div>
+    
+            </div>
+        </div>
+    
+    
+        <div class="palette-container">
+            <div class="palette-column">
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: white;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: black;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #c0c0c0;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #808080;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ff0000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #800000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ffff00;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #808000;"></button>
+            </div>
+            <div class="palette-column">
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #03ff00;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #008000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #03ffff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #008080;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #0000ff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #00007f;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ff00ff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #800080;"></button>
+            </div>
+            <div class="buttons-column">
+                <a href="{{ url_for('algorithm_1') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/line.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('circle') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/circle.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('ellipse') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/ellipse.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('parabola') }}">
+                    <button class="icon-button" style="border: 3px solid #29282b;">
+                        <img src="{{ url_for('static', filename='images/parabola.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('hyperbola') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/hyperbola.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('hermite') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/curve.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('objects_3d') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/3d.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_graham') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/polygon.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_filling_algorithm_1') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/polygon_filled.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_delaunay') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/triangulation.png') }}">
+                    </button>
+                </a>
+            </div>
+        </div>
+
+
+
+    </div>
+    
+    <script>
+        var picked_color = "black"; 
+        var dots_count = 0;
+        var coordinates_1 = { row: 0, col: 0 };
+        var coordinates_2 = { row: 0, col: 0 };
+        var circle_radius = 0;
+        var p_save = 0;
+        var p_var = 0;
+        var saved_parabola_parameters = []
+        var saved_picked_color = ""
+        var saved_parabola = []
+        var current_iteration = 0;
+        var first_drawing = 0;
+
+        function selectPalette(button) {
+            var buttons = document.querySelectorAll('.palette-button');
+            buttons.forEach(function(btn) {
+                btn.classList.remove('selected');
+            });
+            button.classList.add('selected');
+            picked_color = button.style.backgroundColor;
+        }
+
+        function plot() {
+            var x0Value = document.getElementById('x0_input').value;
+            var y0Value = document.getElementById('y0_input').value;
+            var aValue = document.getElementById('a_input').value;  
+
+            x0Value = parseInt(x0Value) || 0;
+            y0Value = parseInt(y0Value) || 0;
+            aValue = parseFloat(aValue) || 5;
+
+            /*var picked_color_save = picked_color
+            picked_color = "white";
+            var xaxis = -65
+            while(xaxis < 65){
+                yaxis = -32
+                while(yaxis < 34){
+                    drawPixel(0, 0, xaxis, yaxis)
+                    yaxis += 1
+                }
+                xaxis+=1
+            }
+
+            draw_x_y_axis()
+
+            picked_color = picked_color_save*/
+
+            p_var = aValue;
+            p_save = aValue
+            parabola(x0Value, y0Value, aValue, 200, 1, picked_color)
+            first_drawing = first_drawing + 1;
+            saved_parabola_parameters = [x0Value, y0Value, aValue]
+            saved_picked_color = picked_color
+
+        }
+
+
+        function drawPixel(x_offset, y_offset, x, y, color) {
+            x+=65
+            x+=x_offset
+            y+=32
+            y+=y_offset
+            if(x >= 0 && x<130 && y>=0 && y<66){
+                var cells = document.querySelectorAll('.cell');
+                var cellIndex = (130 * 66) - (y * 130) - (130 - x);
+                cells[cellIndex].style.backgroundColor = color;
+            }
+        }
+
+
+        function parabola(x_offset, y_offset, p, bound, round, color) {
+            p = Math.abs(p)
+            let x, y, d, p2, p4;
+            p2 = 2 * p;
+            p4 = p2 * 2;
+            x = 0;
+            y = 0;
+            d = 1 - p;
+            var i = 0
+            while (y < p && x <= bound) {
+                if(round == 1){
+                    if(p_save > 0){
+                        drawPixel(x_offset, y_offset, y, x, color);
+                        if(first_drawing == 0){
+                            saved_parabola.push([i, y, x])
+                        }
+                    }else{
+                        drawPixel(x_offset, y_offset, y, -x, color);
+                        if(first_drawing == 0){
+                            saved_parabola.push([i, y, -x])
+                        }
+                    }
+                }else{
+                    if(p_save > 0){
+                        drawPixel(x_offset, y_offset, -y, x, color);
+                        if(first_drawing == 0){
+                            saved_parabola.push([i, -y, x])
+                        }
+                    }else{
+                        drawPixel(x_offset, y_offset, -y, -x, color);
+                        if(first_drawing == 0){
+                            saved_parabola.push([i, -y, -x])
+                        }
+                    }
+                }
+                i++;
+                if (d >= 0) {
+                    x++;
+                    d -= p2;
+                    y++;
+                    d += 2 * y + 1;
+                }
+                if (d == 1) {
+                    d = 1 - p4;
+                } else {
+                    d = 1 - p2;
+                }
+                while (x <= bound) {
+                    if(round == 1){
+                        if(p_save > 0){
+                            drawPixel(x_offset, y_offset, y, x, color);
+                            if(first_drawing == 0){
+                                saved_parabola.push([i, y, x])
+                            }
+                        }else{
+                            drawPixel(x_offset, y_offset, y, -x, color);
+                            if(first_drawing == 0){
+                                saved_parabola.push([i, y, -x])
+                            }
+                        }
+                    }else{
+                        if(p_save > 0){
+                            drawPixel(x_offset, y_offset, -y, x, color);
+                            if(first_drawing == 0){
+                                saved_parabola.push([i, -y, x])
+                            }
+                        }else{
+                            drawPixel(x_offset, y_offset, -y, -x, color);
+                            if(first_drawing == 0){
+                                saved_parabola.push([i, -y, -x])
+                            }
+                        }
+                    }
+                    i++;
+                    if (d <= 0) {
+                        y++;
+                        d += 4 * y;
+                    }
+                    x++;
+                    d -= p4;
+                }
+            }
+
+            round+=1
+            if(round == 2){
+                parabola(x_offset, y_offset, p, bound, 2, color)
+            }
+            
+        }
+
+
+        /*function drawParabola(x0, y0, a, b, c) {
+            x0+=32
+            y0+=65
+            let x = 0;
+            let y = 0;
+            let p = 0;
+
+            drawPixel(y0, x0);
+
+            p = Math.round(Math.pow(b, 2) - (4 * a * c) + (4 * a * x0) + 1) / 4;
+
+            while (x <= 135) {
+                x++;
+                if (p < 0) {
+                    p += 2 * Math.pow(b, 2) * x + Math.pow(b, 2);
+                } else {
+                    y++;
+                    p += 2 * Math.pow(b, 2) * x + Math.pow(b, 2) - (4 * a * y) + 4 * a + 2;
+                }
+                
+                drawPixel(y0 - y, x0 + x);
+                drawPixel(y0 + y, x0 + x);
+            }
+        }*/
+
+        function draw_x_y_axis(){
+            picked_color = "black";
+            var xaxis = -65
+            var yaxis = -32
+            while(xaxis < 65){
+                drawPixel(0, 0, xaxis, 0, picked_color)
+                xaxis += 1
+            }
+            while(yaxis < 34){
+                drawPixel(0, 0, 0, yaxis, picked_color)
+                yaxis += 1
+            }
+        }
+
+        window.onload = function() {
+            draw_x_y_axis()
+
+            var redButton = document.querySelector('.palette-button[style="background-color: #ff0000;"]');
+            selectPalette(redButton);
+
+            p_var = 5;
+            p_save = p_var
+            //parabola(0, 0, p_var, 65, 1)
+            
+            hide_dev_mode('none')
+        };
+
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' || event.key === 'r' || event.key === 'R') {
+                location.reload();
+            }
+        });
+
+        function hide_dev_mode(on_off) {
+
+            document.getElementById('next_button').style.display = on_off;
+            document.getElementById('previous_button').style.display = on_off;
+            document.getElementById('i_label').style.display = on_off;
+            //document.getElementById('e_label').style.display = on_off;
+            document.getElementById('x_label').style.display = on_off;
+            document.getElementById('y_label').style.display = on_off;
+            document.getElementById('plot_label').style.display = on_off;
+            document.getElementById('i_value').style.display = on_off;
+            //document.getElementById('e_value').style.display = on_off;
+            document.getElementById('x_value').style.display = on_off;
+            document.getElementById('y_value').style.display = on_off;
+            document.getElementById('plot_value').style.display = on_off;
+
+        }
+
+        function set_dev_values(saved_parabola_iteration) {
+            document.getElementById('i_value').textContent = saved_parabola_iteration[0]
+            //document.getElementById('e_value').textContent = saved_ellipse_iteration[1]
+            document.getElementById('x_value').textContent = saved_parabola_iteration[1]
+            document.getElementById('y_value').textContent = saved_parabola_iteration[2]
+            document.getElementById('plot_value').textContent = `(${saved_parabola_iteration[1]},${saved_parabola_iteration[2]}), (${-saved_parabola_iteration[1]},${saved_parabola_iteration[2]})`
+        }
+
+        function next_step() {
+            if(current_iteration != saved_parabola.length-1){
+                current_iteration = current_iteration + 1;
+                drawPixel(saved_parabola_parameters[0], saved_parabola_parameters[1], saved_parabola[current_iteration][1], saved_parabola[current_iteration][2], picked_color);
+                drawPixel(saved_parabola_parameters[0], saved_parabola_parameters[1], -saved_parabola[current_iteration][1], saved_parabola[current_iteration][2], picked_color);
+                set_dev_values(saved_parabola[current_iteration]);
+                if(current_iteration == 1){
+                    var button = document.querySelector('.play-button-previous img');
+                    button.src = '{{ url_for("static", filename="images/play_left_white.png") }}';
+                }
+                if(current_iteration == saved_parabola.length-1){
+                    var button2 = document.querySelector('.play-button-next img');
+                    button2.src = '{{ url_for("static", filename="images/play_right_gray.png") }}';
+                }
+            }
+
+        }
+
+        function previous_step() {
+            if(current_iteration != 0){
+                drawPixel(saved_parabola_parameters[0], saved_parabola_parameters[1], saved_parabola[current_iteration][1], saved_parabola[current_iteration][2], "#e5e5e8");
+                drawPixel(saved_parabola_parameters[0], saved_parabola_parameters[1], -saved_parabola[current_iteration][1], saved_parabola[current_iteration][2], "#e5e5e8");
+                current_iteration = current_iteration - 1;
+                set_dev_values(saved_parabola[current_iteration]);
+
+                if(current_iteration == saved_parabola.length-2){
+                    var button2 = document.querySelector('.play-button-next img');
+                    button2.src = '{{ url_for("static", filename="images/play_right_white.png") }}';
+                }            
+                if(current_iteration == 0){
+                    var button2 = document.querySelector('.play-button-previous img');
+                    button2.src = '{{ url_for("static", filename="images/play_left_gray.png") }}';
+                }
+            }
+        }
+
+        function toggleDevMode() {
+            var button = document.querySelector('.dev-mode-button img');
+            var currentSrc = button.src;
+
+
+            if (currentSrc.includes('tools_gray')) {
+                if(first_drawing == 1){
+                    button.src = '{{ url_for("static", filename="images/tools_white.png") }}';
+                    hide_dev_mode('block')
+                    //drawCircle(saved_circle_parameters[0], saved_circle_parameters[1], saved_circle_parameters[2], "#e5e5e8")
+                    //plotPoints(saved_circle_parameters[0], saved_circle_parameters[1], saved_circle[0][2], saved_circle[0][3], saved_picked_color)
+                    saved_parabola.shift();
+                    parabola(saved_parabola_parameters[0], saved_parabola_parameters[1], saved_parabola_parameters[2], 200, 1, "#e5e5e8")
+                    drawPixel(saved_parabola_parameters[0], saved_parabola_parameters[1], saved_parabola[0][1], saved_parabola[0][2], picked_color);
+                    set_dev_values(saved_parabola[0])
+        
+                }
+            } else {
+                button.src = '{{ url_for("static", filename="images/tools_gray.png") }}';
+                //drawCircle(saved_circle_parameters[0], saved_circle_parameters[1], saved_circle_parameters[2], saved_picked_color)
+                parabola(saved_parabola_parameters[0], saved_parabola_parameters[1], saved_parabola_parameters[2], 200, 1, picked_color)
+                hide_dev_mode('none')
+            }
+        }
+
+    </script>
+</body>
+</html>

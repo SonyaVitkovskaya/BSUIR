@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Полигон</title>
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <style>
+        body {
+            background-color: #29282b;
+        }
+
+        nav {
+            background-color: #2f2e31;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            padding: 0 20px; 
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: #c0c0c0;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .navbar b {
+            color: white;
+            text-decoration: none;
+            margin: 0 20px;
+            font-size: 18px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+
+        .cell {
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .content {
+            margin-top: 30px; 
+            display: flex;
+            flex-direction: row;
+        }
+
+        .con-container {
+            display: grid;
+            flex-direction: row;
+        }
+
+        .canvas {
+            padding-left: 20px;
+            display: grid;
+            grid-template-columns: repeat(130, 10px);
+            grid-template-rows: repeat(65, 10px);
+            margin-right: 20px; 
+        }
+
+        .palette-container {
+            flex-wrap: wrap;
+        }
+        .palette-column {
+            width: 90px; 
+        }
+        .buttons-column {
+            width: 90px; 
+            margin-top: 6px;
+        }
+        .palette-button {
+            width: 40px;
+            height: 40px;
+            margin: 1px;
+            border: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .icon-button {
+            background-color: transparent;
+            margin-top: 5px;
+            width: 40px;
+            height: 40px;
+            margin: 1px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .icon-button img {
+            width: 35px;
+            height: 35px; 
+            margin-top: -2px;
+            margin-left: -6px;
+        }
+
+
+        .selected {
+            border: 3px solid #29282b;
+        }
+
+        
+        .plot-button {
+            margin-right: 15px;
+            width: 70px;
+            height: 30px;
+            border-radius: 15px;
+            background-color: #484848;
+            color: white; 
+            border: 2px solid #484848;
+            font-size: 15px;
+            font-family: "Arial";
+            cursor: pointer;
+        }
+
+        .plot-button:hover {
+            color: white;
+            background-color: #29282b;
+            border: 2px solid #29282b;
+        }
+
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="navbar">
+            <b href="{{ url_for('polygon_graham') }}">Метод обхода Грэхема</b>
+            <a href="{{ url_for('polygon_jarvis') }}">Метод обхода Джарвиса</a>
+            <a href="{{ url_for('polygon_connection') }}">Последовательное соединение</a>
+            
+        </div>
+        <button onclick="executeGrahamScan()" class="plot-button">Plot</button>
+
+    </nav>
+
+    <div class="content">
+        <div class="con-container">
+            <div class="canvas">
+                {% for row in range(65, -1, -1) %}
+                    {% for col in range(130) %}
+                        <div class="cell" onclick="changeColor(this, {{ row }}, {{ col }})"></div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+
+        </div>        
+        
+        <div class="palette-container">
+            <div class="palette-column">
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: white;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: black;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #c0c0c0;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #808080;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ff0000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #800000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ffff00;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #808000;"></button>
+            </div>
+            <div class="palette-column">
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #03ff00;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #008000;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #03ffff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #008080;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #0000ff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #00007f;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #ff00ff;"></button>
+                <button class="palette-button" onclick="selectPalette(this)" style="background-color: #800080;"></button>
+            </div>
+            <div class="buttons-column">
+                <a href="{{ url_for('algorithm_1') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/line.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('circle') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/circle.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('ellipse') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/ellipse.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('parabola') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/parabola.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('hyperbola') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/hyperbola.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('hermite') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/curve.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('objects_3d') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/3d.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_graham') }}">
+                    <button class="icon-button" style="border: 3px solid #29282b;">
+                        <img src="{{ url_for('static', filename='images/polygon.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_filling_algorithm_1') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/polygon_filled.png') }}">
+                    </button>
+                </a>
+                <a href="{{ url_for('polygon_delaunay') }}">
+                    <button class="icon-button" style="border: 3px solid #484848;">
+                        <img src="{{ url_for('static', filename='images/triangulation.png') }}">
+                    </button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var picked_color = "#black"; 
+        var segment_dots_coordinates = [];
+        var vectors = [];
+        var segment_mode = 0;
+        var is_convex = 0;
+
+        function selectPalette(button) {
+            var buttons = document.querySelectorAll('.palette-button');
+            buttons.forEach(function(btn) {
+                btn.classList.remove('selected');
+            });
+            button.classList.add('selected');
+            picked_color = button.style.backgroundColor;
+        }
+
+        function changeColor(cell, row, col) {
+
+            segment_dots_coordinates.push([row, col])
+                
+            cell.style.backgroundColor = picked_color;
+
+            /*var container = document.querySelector('.navbar');
+            var sentenceContainer1 = document.createElement('div');
+            sentenceContainer1.textContent = [row, col];
+            container.appendChild(sentenceContainer1);*/
+            
+        }
+
+        function normal(color){
+            normals = count_normals();
+            old_pick = picked_color;
+            picked_color = color;
+            for (var i = 0; i < normals.length; i++){
+                x1 = segment_dots_coordinates[i][1] + Math.round(vectors[i][1]/2);
+                y1 = segment_dots_coordinates[i][0] + Math.round(vectors[i][0]/2);
+                x2 = x1 + normals[i][0];
+                y2 = y1 + normals[i][1];
+                dda_line([y1, x1], [y2,x2]);
+            }
+            picked_color = old_pick;
+        }
+
+        function count_normals(){
+            var normals = [];
+            var dots = []; var chords = []; var n = [];
+            segment_dots_coordinates.forEach((dot)=>dots.push(dot));
+            dots.push(dots[0], dots[1]);
+            vectors.push(vectors[0], vectors[1]);
+            vectors.forEach((vec)=> n.push([vec[0]*(-1), vec[1]]))
+            for (var i = 0; i < vectors.length - 2; i++) {
+                chords.push([dots[i + 2][1]-dots[i][1], dots[i + 2][0]-dots[i][0]]);
+                sign = n[i][0]*chords[i][0] + n[i][1]*chords[i][1];
+                if (sign>0){normals.push(n[i]);}
+                else {normals.push([n[i][0]*(-1), n[i][1]*(-1)]);}
+            }
+            vectors.pop(); vectors.pop();
+            return normals;
+        }
+
+        function graham() {
+            let points = [...segment_dots_coordinates];
+            points.sort((a, b) => a[0] !== b[0] ? a[0] - b[0] : a[1] - b[1]);
+            const pivot = points.shift(); 
+
+            points.sort((a, b) => {
+                const angleA = Math.atan2(a[0] - pivot[0], a[1] - pivot[1]);
+                const angleB = Math.atan2(b[0] - pivot[0], b[1] - pivot[1]);
+                return angleA - angleB;
+            });
+
+            const hull = [pivot];
+
+            for (let point of points) {
+                while (hull.length >= 2 && !isCounterClockwise(hull[hull.length - 2], hull[hull.length - 1], point)) {
+                    hull.pop(); 
+                }
+                hull.push(point);
+            }
+
+            return hull;
+        }
+
+        function isCounterClockwise(p1, p2, p3) {
+            const crossProduct = ((p2[1] - p1[1]) * (p3[0] - p2[0])) - ((p2[0] - p1[0]) * (p3[1] - p2[1]));
+            return crossProduct > 0;
+        }
+
+        function drawHull(hull) {
+            old_color = picked_color;
+            picked_color = "orange"; 
+            for (let i = 0; i < hull.length - 1; i++) {
+                dda_line(hull[i], hull[i + 1]);
+            }
+            dda_line(hull[hull.length - 1], hull[0]);
+            picked_color = old_color;
+        }
+
+        function executeGrahamScan() {
+            const hull = graham();
+            drawHull(hull);
+        }
+        
+        function drawPolygon(){
+            for (var i = 0; i < segment_dots_coordinates.length - 1; i++) {
+                dda_line(segment_dots_coordinates[i], segment_dots_coordinates[i + 1]);
+                vectors.push([segment_dots_coordinates[i + 1][0]-segment_dots_coordinates[i][0], segment_dots_coordinates[i + 1][1]-segment_dots_coordinates[i][1]]);
+            }
+        }
+
+        function dda_line(coordinates_x, coordinates_y) {
+            x1 = coordinates_x[1]
+            y1 = coordinates_x[0]
+            x2 = coordinates_y[1]
+            y2 = coordinates_y[0]
+            let dx = x2 - x1;
+            let dy = y2 - y1;   
+            let steps = Math.max(Math.abs(dx), Math.abs(dy));
+            let x_increment = dx / steps;
+            let y_increment = dy / steps;
+
+            let connected_dots = [];
+            var x = x1;
+            var y = y1;
+
+            for (var i = 0; i <= steps; i++) {
+                connected_dots.push([Math.round(x), Math.round(y)]);
+                x = x + x_increment;
+                y = y + y_increment;
+            }
+
+            connected_dots.forEach(dot => {
+                let x = dot[0];
+                let y = dot[1];
+                drawPixel(x, y, picked_color);
+            });
+        }
+
+        function drawPixel(x, y, color) {
+            if(x >= 0 && x<130 && y>=0 && y<66){
+                var cells = document.querySelectorAll('.cell');
+                var cellIndex = (130 * 66) - (y * 130) - (130 - x);
+                cells[cellIndex].style.backgroundColor = color;
+            }
+        }
+
+
+        window.onload = function() {
+            var blackButton = document.querySelector('.palette-button[style="background-color: black;"]');
+            selectPalette(blackButton);
+
+        };
+
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' || event.key === 'r' || event.key === 'R') {
+                location.reload();
+            }
+        });
+
+
+
+    </script>
+</body>
+</html>
