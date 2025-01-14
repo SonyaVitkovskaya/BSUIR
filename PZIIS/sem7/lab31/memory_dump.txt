@@ -1,0 +1,14 @@
+Использование памяти (RSS): 45416448 байт
+Содержимое оперативной памяти:
+{'confidential': {}, 'non_confidential': {}}
+===== INITIAL MEMORY SNAPSHOT =====
+['  File "D:\\универ\\PZS\\lab31.py", line 151', '    with open(filename, "w", encoding="utf-8") as dump_file:']: size=9311 B, count=15, average=620 B
+['  File "c:\\Users\\User\\.vscode\\extensions\\ms-python.debugpy-2024.12.0-win32-x64\\bundled\\libs\\debugpy\\_vendored\\pydevd\\pydevd.py", line 1392', '    cache_key = (frame.f_code.co_firstlineno, original_filename, force_check_project_scope, frame.f_code)']: size=4664 B, count=88, average=53 B
+['  File "c:\\Users\\User\\.vscode\\extensions\\ms-python.debugpy-2024.12.0-win32-x64\\bundled\\libs\\debugpy\\_vendored\\pydevd\\pydevd_file_utils.py", line 462', '    NORM_PATHS_CONTAINER[filename] = abs_path, real_path']: size=4632 B, count=1, average=4632 B
+['  File "c:\\Users\\User\\.vscode\\extensions\\ms-python.debugpy-2024.12.0-win32-x64\\bundled\\libs\\debugpy\\_vendored\\pydevd\\pydevd.py", line 1291', '    cache_key = (frame.f_code.co_firstlineno, absolute_filename, frame.f_code)']: size=4520 B, count=92, average=49 B
+['  File "c:\\Users\\User\\.vscode\\extensions\\ms-python.debugpy-2024.12.0-win32-x64\\bundled\\libs\\debugpy\\_vendored\\pydevd\\pydevd.py", line 1073', '    cache_key = (frame.f_code.co_firstlineno, abs_real_path_and_basename[0], frame.f_code)']: size=4520 B, count=92, average=49 B
+['  File "c:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python310\\lib\\tkinter\\__init__.py", line 111', '    cnf.update(c)']: size=3360 B, count=20, average=168 B
+['  File "c:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python310\\lib\\tkinter\\__init__.py", line 2584', '    self.children = {}']: size=3024 B, count=24, average=126 B
+['  File "c:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python310\\lib\\tkinter\\__init__.py", line 2359', "    exec('from tkinter import *', dir)"]: size=1424 B, count=10, average=142 B
+['  File "D:\\универ\\PZS\\lab31.py", line 94', '    def clear_entries():']: size=1256 B, count=2, average=628 B
+['  File "c:\\Users\\User\\AppData\\Local\\Programs\\Python\\Python310\\lib\\tkinter\\__init__.py", line 2594', '    self.widgetName = widgetName']: size=1248 B, count=18, average=69 B
