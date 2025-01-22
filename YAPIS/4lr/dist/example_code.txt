@@ -1,0 +1,22 @@
+node e1; node e2; node e3; node e4;
+arc a1 = < e1, e2>; arc a2 = < e3, e4>;
+graph g1 = [nodes : (e1, e2, e3, e4), arcs : (a1, a2)];
+graph g2 = [nodes : (e1, e2, e3, e4),  arcs : (arc a18 = <e1, e3>, arc fgfg =<e2,e3>)];
+
+
+function procedure (graph x, graph y){
+{
+    graph g;
+    g = x + y;
+    g = g & y;
+    return g;
+}
+
+graph result_graph = procedure (g1, g2);
+
+graph path1 = depth_first_search(g1, e1, e2);
+graph path2 = breadth_first_search(g1, e2, e1);
+graph path3 = shortest_path(g2, e1, e1);
+
+graph g3 = g1 / g2;
+
